@@ -58,9 +58,10 @@ class TMLLClient:
         self.logger = Logger("TMLLClient", verbose)
 
         # Check if the TSP server is running (i.e., check if server is reachable)
+        self.health_status = 400
         try:
-            response = self.tsp_client.fetch_health()
-            if response.status_code != 200:
+            self.health_status = self.tsp_client.fetch_health().status_code
+            if self.health_status != 200:
                 self.logger.error(f"TSP server is not running properly. Check its health status.")
                 return
         except Exception as e:
@@ -76,8 +77,8 @@ class TMLLClient:
             tsp_installer.install()
 
             # Check if the TSP server is installed successfully
-            response = self.tsp_client.fetch_health()
-            if response.status_code != 200:
+            self.health_status = self.tsp_client.fetch_health().status_code
+            if self.health_status != 200:
                 self.logger.error("Failed to install the TSP server.")
                 return
 
@@ -101,7 +102,7 @@ class TMLLClient:
             _delete_experiments()
             _delete_traces()
 
-    def create_experiment(self, traces: List[Dict[str, str]], experiment_name: str, remove_previous: bool = False) -> Union[None, Experiment]:
+    def create_experiment(self, traces: List[Dict[str, str]], experiment_name: str) -> Union[None, Experiment]:
         """
         Import traces into the Trace Server Protocol (TSP) server.
 
@@ -109,10 +110,7 @@ class TMLLClient:
         :type traces: List[Dict[str, str]]
         :param experiment_name: Name of the experiment to create
         :type experiment_name: str
-        :param remove_previous: Flag to remove the previous traces and experiment
-        :type remove_previous: bool
         """
-
         # For each trace, add it to the TSP server
         opened_traces = []
         for trace in traces:

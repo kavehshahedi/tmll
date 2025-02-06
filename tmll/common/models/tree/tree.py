@@ -16,6 +16,11 @@ class Tree:
     def __repr__(self) -> str:
         return f"TableTree(nodes={self.nodes})"
     
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Tree):
+            return False
+        return self.nodes == other.nodes
+    
     @classmethod
     def from_tsp_tree(cls, tsp_tree) -> "Tree":
         """Create a Tree object from a TSP tree.

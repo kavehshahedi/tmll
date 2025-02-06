@@ -14,6 +14,11 @@ class NodeTree:
 
     def __repr__(self) -> str:
         return f"NodeTree(name={self.name}, id={self.id}, parent_id={self.parent_id})"
+    
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, NodeTree):
+            return False
+        return self.name == other.name and self.id == other.id and self.parent_id == other.parent_id
 
     @classmethod
     def from_tsp_node(cls, tsp_node) -> "NodeTree":
